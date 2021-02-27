@@ -12,8 +12,8 @@ const Landing: FC = () => {
                             <p className="text-lg font-bold">Because we are way better than you will ever be!</p>
 
                             <div className="flex mt-8">
-                                <Link to="login" className="shadow rounded-md py-1 px-4 text-xl hover:bg-gray-100 mr-10">Login</Link>
-                                <Link to="register" className="shadow rounded-md py-1 px-4 text-xl hover:bg-gray-100">Register</Link>
+                                <Link to="/signup" className="btn mr-5 btn-green">Sign-up</Link>
+                                <Link to="/signin" className="btn">Sign-in</Link>
                             </div>
 
                         </div>

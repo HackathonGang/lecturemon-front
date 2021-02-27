@@ -44,10 +44,10 @@ function App() {
           </Route>
 
           {/* Public routes */}
-          <Route path="/login">
+          <Route path="/signin">
             <Login />
           </Route>
-          <Route path="/register">
+          <Route path="/signup">
             <Register />
           </Route>
           
