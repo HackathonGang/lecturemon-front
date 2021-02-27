@@ -1,20 +1,26 @@
 import { FC } from 'react'
+import { DeepMap, FieldError, FieldValues } from 'react-hook-form'
 
 interface IInput {
     question: string
-    ref: any
+    reff: any
     id: string
+    errors: DeepMap<FieldValues, FieldError>
 }
 
 interface ITextInput extends IInput {
     placeholder: string
 }
 
-export const TextInput: FC<ITextInput> = ({ question, placeholder, ref, id }) => {
+export const TextInput: FC<ITextInput> = ({ question, placeholder, reff, id, errors }) => {
     return (
         <div className="flex flex-col mb-4">
             <label htmlFor={id} className="text-left">{ question }</label>
-            <input ref={ref} type="text" name={id} placeholder={placeholder} className="input"/>
+            <input ref={reff} type="text" name={id} placeholder={placeholder} className={`input ${ errors[id] ? "input-error" : "" }`}/>
+            {
+                errors[id] &&
+                <small className="text-left text-red-500">Please fill in this field!</small>
+            }
         </div>
         
     )
@@ -29,7 +35,7 @@ interface IRadioInput extends IInput {
     options: IRadio[]
 }
 
-export const RadioInput: FC<IRadioInput> = ({ question, id, ref, options }) => {
+export const RadioInput: FC<IRadioInput> = ({ question, id, reff, options, errors }) => {
     return (
     <div className="flex flex-col mb-4">
         <label htmlFor={id} className="text-left mb-1">{ question }</label>
@@ -37,12 +43,16 @@ export const RadioInput: FC<IRadioInput> = ({ question, id, ref, options }) => {
             { options.map(radio => {
                 return (
                     <div key={radio.key} className="flex flex-row items-center justify-center mr-5">
-                        <input className="mr-2" ref={ref} type="radio" id={radio.key} name={id} value={radio.key}/>
+                        <input className="mr-2" ref={reff} type="radio" id={radio.key} name={id} value={radio.key}/>
                         <label htmlFor={radio.key}>{radio.name}</label>
                     </div>
                 )
             })}
         </div>
+        {
+            errors[id] &&
+            <small className="text-left text-red-500">Please choose an option!</small>
+        }
     </div>
     )
 }
@@ -56,16 +66,16 @@ interface ICheckbox {
 interface ICheckboxInput extends IInput {
     options: ICheckbox[]
 }
-export const CheckboxInput: FC<ICheckboxInput> = ({ question, id, ref, options }) => {
+export const CheckboxInput: FC<ICheckboxInput> = ({ question, id, reff, options }) => {
     return (
         <div className="flex flex-col mb-4">
             <p className="text-left">{ question }</p>
             <div className="flex flex-row">
                 { options.map(check => {
                     return (
-                        <div className="flex flex-row items-center justify-center mr-5">
+                        <div key={check.id} className="flex flex-row items-center justify-center mr-5">
                             <label htmlFor={ check.id } className="mr-2">{ check.name }</label>
-                            <input ref={ref} type="checkbox" name={check.id} id={check.id} />
+                            <input ref={reff} type="checkbox" name={check.id} id={check.id} />
                         </div>
                     )
                 })}
@@ -84,18 +94,22 @@ interface IOptionInput extends IInput {
     options: IOption[]
 }
 
-export const SelectInput: FC<IOptionInput> = ({ question, id, ref, options }) => {
+export const SelectInput: FC<IOptionInput> = ({ question, id, reff, options, errors }) => {
     return (
         <div className="flex flex-col mb-4">
             <label className="text-left mt-3" htmlFor={id}>{ question }</label>
-            <select ref={ref} className="input" name={id} id={id}>
+            <select ref={reff} className={`input ${ errors[id] ? "input-error" : "" }`} name={id} id={id}>
                 <option value="null">Please select an option</option>
                 { options.map(option => {
                     return (
-                        <option value={ option.key }>{ option.name }</option>
+                        <option key={ option.key } value={ option.key }>{ option.name }</option>
                     )
                 })}
             </select>
+            {
+                errors[id] &&
+                <small className="text-left text-red-500">Please select an option!</small>
+            }
         </div>
     )
 }
@@ -108,11 +122,11 @@ interface ISlideInput extends IInput {
     endText: string
 }
 
-export const SliderInput: FC<ISlideInput> = ({ question, id, ref, min, max, step, startText, endText }) => {
+export const SliderInput: FC<ISlideInput> = ({ question, id, reff, min, max, step, startText, endText }) => {
     return (
         <div className="flex flex-col mb-4">
             <label className="text-left mt-4 mb-2" htmlFor={id}>{ question }</label>
-            <input ref={ref} type="range" name={ id } id={id} min={min} max={max} step={step}/>
+            <input ref={reff} type="range" name={ id } id={id} min={min} max={max} step={step} defaultValue={3}/>
             <div className="text-left w-full flex flex-row justify-between mt-2">
                 <span className="text-gray-500 text-sm">{ startText }</span>
                 <span className="text-gray-500 text-sm">{ endText }</span>
