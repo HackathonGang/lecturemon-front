@@ -1,22 +1,144 @@
-import { FC } from 'react'
+import { ReactNode, useEffect } from 'react';
+import { FC, useState } from 'react'
 import { useForm } from 'react-hook-form';
-import { RadioInput, TextInput, CheckboxInput, SelectInput, SliderInput } from '../../components/forms';
+import { RadioInput, TextInput, SelectInput, SliderInput } from '../../components/forms';
 import Layout from '../../components/layout'
+
+interface IPollData {
+    survey_id: number
+    survey_title: string
+    description: string
+    target: number // Id
+    target_type: string // "lecture"/"module"
+}
+
+interface IQuestion {
+    title: string
+    type: string
+    options: Array<any>
+}
+
+interface IPostResult {
+    survey_id: number
+    target: number
+    target_type: string
+    answers: any[]
+}
 
 const Polls: FC = () => {
 
-    const { register, handleSubmit, errors, watch } = useForm();
+    const { register, handleSubmit, errors, trigger } = useForm();
+
+    const [maxQ, setMaxQ] = useState<number>(0);
 
     const onSubmit = (data: any) => {
-        console.log(data)
+
+        let answ: any[] = []
+
+        for (let i = 1; i <= maxQ; i++){
+            answ.push(data[""+i])
+        }
+
+        let postData: IPostResult = {
+            survey_id: pollData?.survey_id || -1,
+            target: pollData?.target || -1,
+            target_type: pollData?.target_type || "",
+            answers: answ
+
+        }
+
+        console.log(postData)
+
+
+
+
     }
+
+    const [pollData, setPollData] = useState<IPollData>();
+
+    const [questions, setQuestions] = useState<ReactNode[]>([]);
+
+
+    useEffect(() => {
+
+
+        setPollData({
+            survey_id: 123,
+            survey_title: "CS141 Survey",
+            description: "Did you enjoy the ritual? If not you can go fuck yourself, you boring cunt",
+            target: 123,
+            target_type: "lecture",
+        })
+
+        let questions: IQuestion[] = [
+            {
+                "title": "How satisfied are you?",
+                "type": "slider",
+                "options": ["very unsatisfied", "very satisfied"]
+            },
+            {
+                "title": "Final thoughts?",
+                "type": "text",
+                "options": []
+            },
+            {
+                "title": "How would you rate LectureMon",
+                "type" : "radio",
+                "options": [{name:"Great", key:"great"},{name: "Greater", key:"greater"}]
+            },
+            {
+                "title": "Please select the worst uni from the dropdown",
+                "type" : "select",
+                "options": [{name:"Durhamm", key:"durham"},{name:"Warwick", key:"warwick"}]
+            }
+        ]
+
+
+        let id = 0;
+
+        let questionsToAdd: ReactNode[] = []
+
+        questions.forEach(question => {
+            id++;
+            let toAdd;
+
+            switch (question.type){
+                case "text":
+                    toAdd = <TextInput triggerValidation={trigger} errors={errors} reff={register({ required: true })} question={question.title} placeholder="Answer here" id={""+id}/>
+                    break;
+
+                case "radio":
+                    toAdd = <RadioInput triggerValidation={trigger} errors={errors} reff={register({ required: true })} question={question.title} id={""+id} options={question.options} />
+                    break;
+
+                case "select":
+                    toAdd = <SelectInput triggerValidation={trigger} errors={errors} reff={register({ required: true, validate: value => value !== "null" || "Please select an option" })} question={question.title} id={""+id} options={question.options} />
+                    break;
+
+                case "slider":
+                    toAdd = <SliderInput triggerValidation={trigger} errors={errors} reff={register({ required: true })} question={question.title} id={""+id} min={1} max={5} step={1} startText={question.options[0] || ""} endText={question.options[1] || ""} />
+            }
+
+            
+
+            
+            questionsToAdd.push(toAdd)
+
+        })
+
+        setMaxQ(id)
+
+        setQuestions(questionsToAdd)
+    }, [register, errors, trigger])
+
+
 
     return (
         <>
             <Layout pageName="Dashboard">
 
-                <h1 className="mt-2 text-4xl font-bold">[Module] Poll</h1>
-                <small>Give feedback on [module] to get 0.0001XP! (Want more? Buy a bargain £500 lootbox for a chance to win a 2x XP boost!)</small>
+                <h1 className="mt-2 mb-1 text-4xl font-bold capitalize">[{ pollData?.target_type || "No type"}] { pollData?.survey_title || "No Survey Title" }</h1>
+                <small className="text-lg">{ pollData?.description || "No Description" }</small>
 
            
                 <div className="w-full mt-4 mx-auto h-full flex items-center justify-center">
@@ -27,6 +149,14 @@ const Polls: FC = () => {
 
                         <form className="w-full flex flex-col" onSubmit={handleSubmit(onSubmit)} >
 
+                            { questions.map((q, ind) => {
+                                return (
+                                    <span key={ind}>
+                                    {q}
+                                    </span>
+                                )
+                            })}
+{/* 
                             <TextInput errors={errors} reff={register({ required: true })} question="Question 1" placeholder="poo" id="1" />
 
                             <RadioInput errors={errors} reff={register({ required: true })} question="Question 2" id="radio-2" options={[{name: "Option 1", key: "opt1"}, {name: "Option 2", key: "opt2"}, {name: "Option 3", key: "opt3"}]} />
@@ -34,7 +164,7 @@ const Polls: FC = () => {
 
                             <SelectInput errors={errors} reff={register({ required: true, validate: value => value !== "null" || "Please select an option" })} question="Question 4" id="select-1" options={[{ name: "Option 1", key: "opt1"}, { name: "Option 2", key: "opt2"}]} />
 
-                            <SliderInput errors={errors} reff={register({ required: true })} question="Question 5" id="slider-1" min={1} max={5} step={1} startText="Disagree" endText="Agree" />
+                            <SliderInput errors={errors} reff={register({ required: true })} question="Question 5" id="slider-1" min={1} max={5} step={1} startText="Disagree" endText="Agree" /> */}
 
 
                             <button type="submit" className="btn">Submit Feedback</button>

@@ -6,17 +6,18 @@ interface IInput {
     reff: any
     id: string
     errors: DeepMap<FieldValues, FieldError>
+    triggerValidation: (payload?: string | string[]) => Promise<boolean>
 }
 
 interface ITextInput extends IInput {
     placeholder: string
 }
 
-export const TextInput: FC<ITextInput> = ({ question, placeholder, reff, id, errors }) => {
+export const TextInput: FC<ITextInput> = ({ question, placeholder, reff, id, errors, triggerValidation }) => {
     return (
         <div className="flex flex-col mb-4">
             <label htmlFor={id} className="text-left">{ question }</label>
-            <input ref={reff} type="text" name={id} placeholder={placeholder} className={`input ${ errors[id] ? "input-error" : "" }`}/>
+            <input ref={reff} type="text" name={id} placeholder={placeholder} className={`input ${ errors[id] ? "input-error" : "" }`} onChange={() => triggerValidation()}/>
             {
                 errors[id] &&
                 <small className="text-left text-red-500">Please fill in this field!</small>
@@ -35,7 +36,7 @@ interface IRadioInput extends IInput {
     options: IRadio[]
 }
 
-export const RadioInput: FC<IRadioInput> = ({ question, id, reff, options, errors }) => {
+export const RadioInput: FC<IRadioInput> = ({ question, id, reff, options, errors, triggerValidation }) => {
     return (
     <div className="flex flex-col mb-4">
         <label htmlFor={id} className="text-left mb-1">{ question }</label>
@@ -43,7 +44,7 @@ export const RadioInput: FC<IRadioInput> = ({ question, id, reff, options, error
             { options.map(radio => {
                 return (
                     <div key={radio.key} className="flex flex-row items-center justify-center mr-5">
-                        <input className="mr-2" ref={reff} type="radio" id={radio.key} name={id} value={radio.key}/>
+                        <input className="mr-2" ref={reff} type="radio" id={radio.key} name={id} value={radio.key} onChange={() => triggerValidation()}/>
                         <label htmlFor={radio.key}>{radio.name}</label>
                     </div>
                 )
@@ -73,7 +74,7 @@ export const CheckboxInput: FC<ICheckboxInput> = ({ question, id, reff, options 
             <div className="flex flex-row">
                 { options.map(check => {
                     return (
-                        <div key={check.id} className="flex flex-row items-center justify-center mr-5">
+                        <div key={check.id + check.name} className="flex flex-row items-center justify-center mr-5">
                             <label htmlFor={ check.id } className="mr-2">{ check.name }</label>
                             <input ref={reff} type="checkbox" name={check.id} id={check.id} />
                         </div>
@@ -94,15 +95,15 @@ interface IOptionInput extends IInput {
     options: IOption[]
 }
 
-export const SelectInput: FC<IOptionInput> = ({ question, id, reff, options, errors }) => {
+export const SelectInput: FC<IOptionInput> = ({ question, id, reff, options, errors, triggerValidation }) => {
     return (
         <div className="flex flex-col mb-4">
             <label className="text-left mt-3" htmlFor={id}>{ question }</label>
-            <select ref={reff} className={`input ${ errors[id] ? "input-error" : "" }`} name={id} id={id}>
+            <select ref={reff} className={`input ${ errors[id] ? "input-error" : "" }`} name={id} id={id} onChange={() => triggerValidation()}>
                 <option value="null">Please select an option</option>
                 { options.map(option => {
                     return (
-                        <option key={ option.key } value={ option.key }>{ option.name }</option>
+                        <option key={ option.key  } value={ option.key }>{ option.name }</option>
                     )
                 })}
             </select>

@@ -107,7 +107,7 @@ const Register: FC = () => {
                             }
 
 
-                            <label className="text-left mt-3" htmlFor="uniemail">University Email</label>
+                            <label className="text-left mt-3" htmlFor="uni_email">University Email</label>
                             <input className={`input ${errors.uniemail ? "input-error" : ""}`} type="email" name="uniemail" id="uniemail" ref={register({ required: true })}/>
                             {
                                 errors.uniemail?.type === "required" &&
