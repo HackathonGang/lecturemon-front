@@ -3,3 +3,10 @@ export interface IUser {
     name?: string
     id?: string
 }
+
+export interface IXp {
+    current: number
+    max: number
+    quantifier: string
+    level: number
+}
