@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { FC } from 'react'
 import { useForm } from 'react-hook-form';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 
 interface IRegisterForm extends ISubmission{
     conf_password: string
@@ -15,16 +15,42 @@ interface ISubmission {
     useremail: string
 }
 
-
+interface IError {
+    error: string
+    errorField: string
+}
 
 const Register: FC = () => {
 
-    const { register, handleSubmit, errors, watch } = useForm<IRegisterForm>()
+    const { register, handleSubmit, errors, watch, setError } = useForm<IRegisterForm>()
+
+    const hist = useHistory()
 
     const onSubmit = async (data: ISubmission) => {
         console.log(data)
-        let raw = await axios.post("/api/signup", data);
-        console.log(raw)
+        axios.post("http://localhost:8090/api/signup", data).then(data => {
+            console.log(data);
+            alert("Please log in")
+            hist.push("/signin")
+        }).catch(err => {
+            console.log(err.response.data)
+
+            err.response.data.forEach((ob: IError) => {
+                switch (ob.errorField){
+                    case "uniemail":
+                        setError('uniemail', { message: ob.error })
+                        break
+                    
+                    case "name":
+                        setError('name', { message: ob.error })    
+                        break
+
+                    case "password":
+                        setError('password', { message: ob.error })
+                }
+
+            })
+        })
     }
 
 
@@ -45,6 +71,10 @@ const Register: FC = () => {
                                 errors.name?.type === "required" &&
                                 <small className="text-left text-red-500">Please enter your name!</small>
                             }
+                            {
+                                errors.name &&
+                                <small className="text-left text-red-500">{ errors.name.message }</small>
+                            }
 
                             <label className="text-left mt-3" htmlFor="password">Password</label>
                             <input className={`input ${errors.password ? "input-error" : ""}`} type="password" name="password" id="password" ref={register({ required: true })}/>
@@ -52,9 +82,13 @@ const Register: FC = () => {
                                 errors.password?.type === "required" &&
                                 <small className="text-left text-red-500">Please enter a password</small>
                             }
+                                                        {
+                                errors.password &&
+                                <small className="text-left text-red-500">{ errors.password.message }</small>
+                            }
 
                             <label className="text-left mt-3" htmlFor="password">Confirm Password</label>
-                            <input className={`input ${errors.conf_password ? "input-error" : ""}`} type="password" name="conf_password" id="password" ref={register({ required: true, validate: value => value === watch("password", "") || "The passwords don't match!" })}/>
+                            <input className={`input ${errors.conf_password ? "input-error" : ""}`} type="password" name="conf_password" id="conf_password" ref={register({ required: true, validate: value => value === watch("password", "") || "The passwords don't match!" })}/>
                             {
                                 errors.conf_password &&
                                 <small className="text-left text-red-500">{errors.conf_password.message}</small>
@@ -75,10 +109,13 @@ const Register: FC = () => {
 
                             <label className="text-left mt-3" htmlFor="uniemail">University Email</label>
                             <input className={`input ${errors.uniemail ? "input-error" : ""}`} type="email" name="uniemail" id="uniemail" ref={register({ required: true })}/>
-
                             {
                                 errors.uniemail?.type === "required" &&
                                 <small className="text-left text-red-500">Please enter an email!</small>
+                            }
+                                                        {
+                                errors.uniemail &&
+                                <small className="text-left text-red-500">{ errors.uniemail.message }</small>
                             }
 
                             <label className="text-left mt-3" htmlFor="useremail">Personal Email</label>

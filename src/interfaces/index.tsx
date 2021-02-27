@@ -1,7 +1,7 @@
 export interface IUser {
     logged: boolean
     name?: string
-    id?: string
+    id?: number
 }
 
 export interface IXp {
@@ -9,4 +9,17 @@ export interface IXp {
     max: number
     quantifier: string
     level: number
+}
+
+export interface IToDo {
+    moduleCode: string,
+    title: string,
+    id: number
+}
+
+export interface IModule {
+    moduleCode: string,
+    name: string,
+    organiser: string,
+    id: number
 }

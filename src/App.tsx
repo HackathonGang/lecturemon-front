@@ -11,13 +11,14 @@ import Landing from './views/landing';
 import Profile from './views/profile';
 import { XpProvider } from './context/xp';
 import Polls from './views/polls';
+import Leaderboard from './views/leaderboard';
 
 function App() {
   
   const [user, setUser] = useState<IUser>({
     logged: true, // Set to true to fake login.
     name: "£500 Loot Box",
-    id: "500-500-500-500",
+    id: 500
   });
 
   const [xp, setXp] = useState<IXp>({
@@ -65,6 +66,10 @@ function App() {
 
             <ProtectedRoute path="/poll">
               <Polls />
+            </ProtectedRoute>
+
+            <ProtectedRoute path="/leaderboard">
+              <Leaderboard />
             </ProtectedRoute>
 
 
