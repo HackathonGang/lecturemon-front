@@ -1,9 +1,12 @@
 import { FC } from 'react'
+import Layout from '../../components/layout';
 
 const Profile: FC = () => {
     return (
         <>
-            <p>profile</p>
+            <Layout pageName="Profile">
+                <p>profile</p>
+            </Layout>
         </>
     )
 }

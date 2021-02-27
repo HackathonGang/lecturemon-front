@@ -13,7 +13,7 @@ import Profile from './views/profile';
 function App() {
   
   const [user, setUser] = useState<IUser>({
-    logged: false, // Set to true to fake login.
+    logged: true, // Set to true to fake login.
     name: "£500 Loot Box",
     id: "500-500-500-500"
   });
