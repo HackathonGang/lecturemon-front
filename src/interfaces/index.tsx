@@ -18,8 +18,15 @@ export interface IToDo {
 }
 
 export interface IModule {
-    moduleCode: string,
-    name: string,
-    organiser: string,
-    id: number
+    module_code: string,
+    module_name: string,
+    module_lecturer: string,
+    module_id: number,
+    lecturer_id: number
+}
+
+export interface ISurvey {
+    survey_id: number,
+    survey_type: string,
+    survey_name: string
 }

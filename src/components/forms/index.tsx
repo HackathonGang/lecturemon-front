@@ -17,7 +17,7 @@ export const TextInput: FC<ITextInput> = ({ question, placeholder, reff, id, err
     return (
         <div className="flex flex-col mb-4">
             <label htmlFor={id} className="text-left">{ question }</label>
-            <input ref={reff} type="text" name={id} placeholder={placeholder} className={`input ${ errors[id] ? "input-error" : "" }`} onChange={() => triggerValidation()}/>
+            <input ref={reff} type="text" name={id} placeholder={placeholder} className={`input ${ errors[id] ? "input-error" : "" }`} />
             {
                 errors[id] &&
                 <small className="text-left text-red-500">Please fill in this field!</small>

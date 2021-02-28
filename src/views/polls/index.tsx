@@ -1,8 +1,11 @@
-import { ReactNode, useEffect } from 'react';
+import axios from 'axios';
+import { ReactNode, useContext, useEffect } from 'react';
 import { FC, useState } from 'react'
 import { useForm } from 'react-hook-form';
+import { useHistory, useParams } from 'react-router-dom';
 import { RadioInput, TextInput, SelectInput, SliderInput } from '../../components/forms';
 import Layout from '../../components/layout'
+import XpContext from '../../context/xp';
 
 interface IPollData {
     survey_id: number
@@ -31,6 +34,14 @@ const Polls: FC = () => {
 
     const [maxQ, setMaxQ] = useState<number>(0);
 
+    const values = useParams<{id: string}>()
+
+    const pid = values.id;
+
+    const { xp, setXp } = useContext(XpContext)!;
+
+    const hist = useHistory()
+
     const onSubmit = (data: any) => {
 
         let answ: any[] = []
@@ -49,6 +60,26 @@ const Polls: FC = () => {
 
         console.log(postData)
 
+        axios.post("/api/surveyresponse", pollData).then(data => {
+            console.log(data)
+
+            axios.get("/api/ping").then(data => {
+
+          
+                setXp({
+                  ...xp,
+                  current: data.data.xp
+                })
+
+                setTimeout(() => {
+                    hist.push("/")
+                }, 1005)
+          
+          
+          
+              })
+        })
+
 
 
 
@@ -61,39 +92,14 @@ const Polls: FC = () => {
 
     useEffect(() => {
 
+        axios.get(`/api/survey/${pid}`).then(data => {
+            console.log(data)
 
-        setPollData({
-            survey_id: 123,
-            survey_title: "CS141 Survey",
-            description: "Did you enjoy the ritual? If not you can go fuck yourself, you boring cunt",
-            target: 123,
-            target_type: "lecture",
-        })
+            setPollData(data.data)
 
-        let questions: IQuestion[] = [
-            {
-                "title": "How satisfied are you?",
-                "type": "slider",
-                "options": ["very unsatisfied", "very satisfied"]
-            },
-            {
-                "title": "Final thoughts?",
-                "type": "text",
-                "options": []
-            },
-            {
-                "title": "How would you rate LectureMon",
-                "type" : "radio",
-                "options": [{name:"Great", key:"great"},{name: "Greater", key:"greater"}]
-            },
-            {
-                "title": "Please select the worst uni from the dropdown",
-                "type" : "select",
-                "options": [{name:"Durhamm", key:"durham"},{name:"Warwick", key:"warwick"}]
-            }
-        ]
+            let questions: IQuestion[] = data.data.questions
 
-
+            
         let id = 0;
 
         let questionsToAdd: ReactNode[] = []
@@ -123,13 +129,18 @@ const Polls: FC = () => {
 
             
             questionsToAdd.push(toAdd)
-
-        })
-
+            
         setMaxQ(id)
 
         setQuestions(questionsToAdd)
-    }, [register, errors, trigger])
+        })
+
+        })
+
+
+
+
+    }, [register, errors, trigger, pid])
 
 
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { UserProvider } from './context/user';
 import { IUser, IXp } from './interfaces'
-import { BrowserRouter as Router, Route, Switch, useHistory } from 'react-router-dom'
+import { BrowserRouter as Router, Link, Route, Switch, useHistory } from 'react-router-dom'
 ;
 import ProtectedRoute from './components/auth/protectedRoute';
 import Register from './views/auth/register';
@@ -13,6 +13,8 @@ import { XpProvider } from './context/xp';
 import Polls from './views/polls';
 import Leaderboard from './views/leaderboard';
 import axios from 'axios';
+import Module from './views/module';
+import Lecturer from './views/lecturer';
 
 function App() {
   
@@ -36,6 +38,11 @@ function App() {
         logged: true,
         name: data.data.name,
         id: data.data.id
+      })
+
+      setXp({
+        ...xp,
+        current: data.data.xp
       })
 
 
@@ -88,7 +95,7 @@ function App() {
               <Profile />
             </ProtectedRoute>
 
-            <ProtectedRoute path="/poll">
+            <ProtectedRoute path="/poll/:id">
               <Polls />
             </ProtectedRoute>
 
@@ -96,7 +103,21 @@ function App() {
               <Leaderboard />
             </ProtectedRoute>
 
+            <ProtectedRoute path="/module/:id">
+              <Module />
+            </ProtectedRoute>
 
+            <ProtectedRoute path="/lecturer/:id">
+              <Lecturer />
+            </ProtectedRoute>
+
+            <Route>
+              <div className="w-screen h-screen flex flex-col items-center justify-center">
+                <h1 className="text-7xl mb-2">Error 404</h1>
+                <p className="mb-2">The page you tried to access doesn't exist</p>
+                <Link to="/" className="btn">Home</Link>
+              </div>
+            </Route>
           </Switch>
         </Router>
       </UserProvider>

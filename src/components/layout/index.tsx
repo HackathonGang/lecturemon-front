@@ -1,3 +1,4 @@
+import axios from 'axios';
 import React, { FC, useContext, useEffect } from 'react'
 import { NavLink } from 'react-router-dom'
 import UserContext from '../../context/user'
@@ -20,9 +21,17 @@ const Layout: FC<ILayout>  = ({ pageName, children }) => {
     const { xp } = useContext(XpContext)!;
 
     
-    let nextLevel = 100;
+    let nextLevel = Math.floor(xp.current/100) + 1
 
-    if (xp.level !== undefined) nextLevel = xp.level + 1
+    let current = xp.current
+    let max = 100
+    let level = Math.floor(current/100)
+
+    current = current - (level*100)
+
+
+    let showWidth = current/max*100+ "%"
+
 
     return (
         <>
@@ -30,8 +39,8 @@ const Layout: FC<ILayout>  = ({ pageName, children }) => {
             <main>
                 <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
                     <h1 className="mt-20 text-4xl font-bold mb-2">Hello, { user.name }</h1>
-                    <small>Progress to level { nextLevel }: {`${Math.round(xp.current/xp.max * 100)}%`}</small>
-                    { xp.current !== 0 && <Progress current={xp.current} max={xp.max} quantity={xp.quantifier} />}
+                    <small>Progress to level { nextLevel }: {showWidth}</small>
+                    { xp.current !== 0 && <Progress current={xp.current} max={100} quantity={xp.quantifier} />}
                     <span className="m-5"></span>
                     { children }
                 </div>
@@ -46,6 +55,17 @@ export default Layout
 
 
 const Navbar: FC = () => {
+
+
+    const { setUser } = useContext(UserContext)!;
+
+    const logout = () => {
+        axios.get("/api/logout").then(data => {
+            setUser({ logged: false })
+        })
+    }
+
+
     return (
         <nav className="bg-white border border-gray-200">
             <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
@@ -75,7 +95,7 @@ const Navbar: FC = () => {
                                 <NavLink exact to="/" activeClassName="border border-black" className="text-gray-700 hover:bg-gray-400 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Dashboard</NavLink>
                                 <NavLink to="/leaderboard" activeClassName="border border-black" className="text-gray-700 hover:bg-gray-400 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Leaderboard</NavLink>
                                 <NavLink to="/profile" activeClassName="border border-black" className="text-gray-700 hover:bg-gray-400 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Profile</NavLink>
-                                <button className="text-gray-700 hover:bg-gray-400 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Logout</button>
+                                <button onClick={() => logout()} className="text-gray-700 hover:bg-gray-400 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Logout</button>
                             </div>
                     </div>
                 </div>

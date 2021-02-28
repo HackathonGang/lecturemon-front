@@ -3,6 +3,7 @@ import { FC, useContext } from 'react'
 import { useForm } from 'react-hook-form';
 import { Link, useHistory } from 'react-router-dom';
 import UserContext from '../../../context/user';
+import XpContext from '../../../context/xp';
 
 interface ILoginForm {
     uniemail: string
@@ -17,6 +18,7 @@ interface IError {
 interface IResp {
     id: number
     name: string
+    xp: number
 }
 
 const Login: FC = () => {
@@ -24,6 +26,8 @@ const Login: FC = () => {
     const { register, handleSubmit, errors, setError } = useForm<ILoginForm>()
 
     const {user, setUser} = useContext(UserContext)!;
+
+    const { xp, setXp } = useContext(XpContext)!;
 
     const hist = useHistory()
 
@@ -34,6 +38,10 @@ const Login: FC = () => {
                 name: ret.data.name,
                 logged: true
             })
+            setXp({
+                ...xp,
+                current: ret.data.xp
+              })
 
             hist.push("/")
 
