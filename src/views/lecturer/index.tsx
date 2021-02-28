@@ -49,6 +49,8 @@ const Lecturer: FC = () => {
         <>
             <Layout pageName="Lecturer">
                 <h1 className="mt-5 text-4xl font-bold">{ lecturer?.lecturer_name|| "No Name Found" }</h1>
+                <br/>
+                <p>Get a higher rarity card by completing more of the lecturer surveys as they come out!</p>
 
                 <div className="mt-5 grid grids-cols-1 md:grid-cols-4 gap-8">
                 {

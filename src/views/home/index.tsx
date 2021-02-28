@@ -3,11 +3,11 @@ import { FC, useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom';
 import Layout from '../../components/layout'
 import UserContext from '../../context/user';
-import { IModule, ISurvey, IToDo } from '../../interfaces';
+import { IModule, ISurvey } from '../../interfaces';
 
 const Home: FC = () => {
 
-    const [toDo, setToDo] = useState<IToDo[]>([]);
+
     const [modules, setModules] = useState<IModule[]>([]);
     const [surveys, setSurveys] = useState<ISurvey[]>([]);
 

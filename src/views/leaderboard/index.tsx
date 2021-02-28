@@ -1,7 +1,7 @@
 import axios from 'axios';
-import { FC, useContext, useEffect, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import Layout from '../../components/layout';
-import UserContext from '../../context/user'
+
 
 
 interface ILeaderboard {

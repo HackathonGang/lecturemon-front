@@ -25,7 +25,7 @@ const Login: FC = () => {
 
     const { register, handleSubmit, errors, setError } = useForm<ILoginForm>()
 
-    const {user, setUser} = useContext(UserContext)!;
+    const {setUser} = useContext(UserContext)!;
 
     const { xp, setXp } = useContext(XpContext)!;
 

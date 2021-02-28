@@ -50,6 +50,8 @@ const Module: FC = () => {
                     <br/>
                     Code: { module?.module_code || "No Code Found"}
                 </p>
+                <br/>
+                <p>Get a higher rarity card by completing more of the modules surveys as they come out!</p>
 
                 <div className="mt-5 grid grids-cols-1 md:grid-cols-4 gap-8">
                 {
