@@ -1,5 +1,5 @@
 export interface IUser {
-    logged: boolean
+    logged?: boolean
     name?: string
     id?: number
 }

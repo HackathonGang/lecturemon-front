@@ -28,7 +28,7 @@ const Register: FC = () => {
 
     const onSubmit = async (data: ISubmission) => {
         console.log(data)
-        axios.post("http://localhost:8090/api/signup", data).then(data => {
+        axios.post("/api/signup", data).then(data => {
             console.log(data);
             alert("Please log in")
             hist.push("/signin")

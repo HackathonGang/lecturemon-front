@@ -1,20 +1,60 @@
-import axios from 'axios';
-import { FC } from 'react'
+import axios, { AxiosResponse } from 'axios';
+import { FC, useContext } from 'react'
 import { useForm } from 'react-hook-form';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
+import UserContext from '../../../context/user';
 
 interface ILoginForm {
     uniemail: string
     password: string
 }
 
+interface IError {
+    error: string
+    errorField: string
+}
+
+interface IResp {
+    id: number
+    name: string
+}
+
 const Login: FC = () => {
 
-    const { register, handleSubmit, errors } = useForm<ILoginForm>()
+    const { register, handleSubmit, errors, setError } = useForm<ILoginForm>()
+
+    const {user, setUser} = useContext(UserContext)!;
+
+    const hist = useHistory()
 
     const onSubmit = async (data: ILoginForm) => {
-        let raw = await axios.post("", data);
-        console.log(raw)
+        axios.post("/api/signin", data).then((ret: AxiosResponse<IResp>) => {
+            setUser({
+                id: ret.data.id,
+                name: ret.data.name,
+                logged: true
+            })
+
+            hist.push("/")
+
+        }).catch(err => {
+            console.log(err.response.data)
+
+            err.response.data.forEach((ob: IError) => {
+                switch (ob.errorField){
+                    case "uniemail":
+                        setError('uniemail', { message: ob.error })
+                        break
+                    
+
+                    case "password":
+                        setError('password', { message: ob.error })
+                        break
+                }
+
+            })
+        })
+
     }
 
     return (
@@ -28,10 +68,14 @@ const Login: FC = () => {
 
                         <form className="w-full flex flex-col" onSubmit={handleSubmit(onSubmit)}>
                             <label className="text-left" htmlFor="email">University Email</label>
-                            <input className={`input ${errors.uniemail ? "input-error" : ""}`} type="text" name="email" id="email" ref={register({ required: true })}/>
+                            <input className={`input ${errors.uniemail ? "input-error" : ""}`} type="text" name="uniemail" id="email" ref={register({ required: true })}/>
                             {
                                 errors.uniemail?.type === "required" &&
                                 <small className="text-left text-red-500">Please enter your university email!</small>
+                            }
+                            {
+                                errors.uniemail &&
+                                <small className="text-left text-red-500">{ errors.uniemail.message }</small>
                             }
 
                             <label className="text-left mt-3" htmlFor="password">Password</label>
@@ -39,6 +83,10 @@ const Login: FC = () => {
                             {
                                 errors.password?.type === "required" &&
                                 <small className="text-left text-red-500">Please enter your password!</small>
+                            }
+                            {
+                                errors.password &&
+                                <small className="text-left text-red-500">{ errors.password.message }</small>
                             }
 
                             <span className="my-2" />
